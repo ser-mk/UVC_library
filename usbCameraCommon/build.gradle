@@ -50,5 +50,5 @@ dependencies {
     compile("com.serenegiant:common:${commonLibVersion}") {
    		exclude module: 'support-v4'
    	}
-    compile project(':UVC/libuvccamera')
+    compile project(':libuvccamera')
 }
