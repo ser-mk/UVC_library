@@ -333,9 +333,9 @@ int UVCPreview::startPreview() {
 		mIsRunning = true;
 		pthread_mutex_lock(&preview_mutex);
 		{
-			if (LIKELY(mPreviewWindow)) {
-				result = pthread_create(&preview_thread, NULL, preview_thread_func, (void *)this);
-			}
+			LOGW("UVCPreview:: start preview_thread_func");
+			result = pthread_create(&preview_thread, NULL, preview_thread_func, (void *)this);
+			
 		}
 		pthread_mutex_unlock(&preview_mutex);
 		if (UNLIKELY(result != EXIT_SUCCESS)) {
@@ -494,6 +494,8 @@ int UVCPreview::prepare_preview(uvc_stream_ctrl_t *ctrl) {
 			if (LIKELY(mPreviewWindow)) {
 				ANativeWindow_setBuffersGeometry(mPreviewWindow,
 					frameWidth, frameHeight, previewFormat);
+			} else {
+				LOGW("UVCPreview::prepare_preview is ");
 			}
 			pthread_mutex_unlock(&preview_mutex);
 		} else {
