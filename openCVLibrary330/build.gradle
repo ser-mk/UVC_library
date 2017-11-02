@@ -7,12 +7,19 @@ android {
     defaultConfig {
         minSdkVersion versionMinSdkTarget
         targetSdkVersion versionTarget
+        versionCode 1
+        versionName "1.0"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['../opencv_sdk/native/libs/']
         }
     }
 }
