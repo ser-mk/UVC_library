@@ -41,6 +41,7 @@
 #include "UVCPreview.h"
 #include "libuvc_internal.h"
 
+
 #define	LOCAL_DEBUG 0
 #define MAX_FRAME 4
 #define PREVIEW_PIXEL_BYTES 4	// RGBA/RGBX
@@ -547,7 +548,7 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 			for ( ; LIKELY(isRunning()) ; ) {
 				frame = waitPreviewFrame();
 				if (LIKELY(frame)) {
-					frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
+					//frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
 					addCaptureFrame(frame);
 				}
 			}
@@ -849,8 +850,9 @@ void UVCPreview::do_capture_callback(JNIEnv *env, uvc_frame_t *frame) {
 	ENTER();
 
 	if (LIKELY(frame)) {
-		uvc_frame_t *callback_frame = frame;
-		if (mFrameCallbackObj) {
+		//uvc_frame_t *callback_frame = frame;
+
+		if (mFrameCallbackObj) {/*
 			if (mFrameCallbackFunc) {
 				callback_frame = get_frame(callbackPixelBytes);
 				if (LIKELY(callback_frame)) {
@@ -865,14 +867,20 @@ void UVCPreview::do_capture_callback(JNIEnv *env, uvc_frame_t *frame) {
 					callback_frame = frame;
 					goto SKIP;
 				}
+				
 			}
-			jobject buf = env->NewDirectByteBuffer(callback_frame->data, callbackPixelBytes);
+			*/
+			//jobject buf = env->NewDirectByteBuffer(callback_frame->data, callbackPixelBytes);
+			jobject buf = env->NewDirectByteBuffer(frame->data, frame->data_bytes);
 			env->CallVoidMethod(mFrameCallbackObj, iframecallback_fields.onFrame, buf);
 			env->ExceptionClear();
 			env->DeleteLocalRef(buf);
+			recycle_frame(frame);
 		}
+		/*
  SKIP:
 		recycle_frame(callback_frame);
+		*/
 	}
 	EXIT();
 }

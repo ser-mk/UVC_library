@@ -1324,12 +1324,16 @@ uvc_error_t uvc_any2rgbx(uvc_frame_t *in, uvc_frame_t *out) {
 		return uvc_mjpeg2rgbx(in, out);
 #endif
 	case UVC_FRAME_FORMAT_YUYV:
+		//LOGI("UVC_FRAME_FORMAT_YUYV...");
 		return uvc_yuyv2rgbx(in, out);
 	case UVC_FRAME_FORMAT_UYVY:
+        LOGI("UVC_FRAME_FORMAT_UYVY...");
 		return uvc_uyvy2rgbx(in, out);
 	case UVC_FRAME_FORMAT_RGBX:
+        LOGI("UVC_FRAME_FORMAT_RGBX...");
 		return uvc_duplicate_frame(in, out);
 	case UVC_FRAME_FORMAT_RGB:
+		LOGI("UVC_FRAME_FORMAT_RGB...");
 		return uvc_rgb2rgbx(in, out);
 	default:
 		return UVC_ERROR_NOT_SUPPORTED;
