@@ -41,6 +41,8 @@
 
 typedef uvc_error_t (*convFunc_t)(uvc_frame_t *in, uvc_frame_t *out);
 
+typedef void (*pass_2_cv_t)(JNIEnv *env, uvc_frame_t *in);
+
 #define PIXEL_FORMAT_RAW 0		// same as PIXEL_FORMAT_YUV
 #define PIXEL_FORMAT_YUV 1
 #define PIXEL_FORMAT_RGB565 2
@@ -109,6 +111,9 @@ private:
 	void do_capture_idle_loop(JNIEnv *env);
 	void do_capture_callback(JNIEnv *env, uvc_frame_t *frame);
 	void callbackPixelFormatChanged();
+
+    static pass_2_cv_t pass2Cv;
+
 public:
 	UVCPreview(uvc_device_handle_t *devh);
 	~UVCPreview();
@@ -121,6 +126,12 @@ public:
 	int stopPreview();
 	inline const bool isCapturing() const;
 	int setCaptureDisplay(ANativeWindow *capture_window);
+
+    static void setPass2cv(pass_2_cv_t point)
+    {
+        pass2Cv = point;
+    }
+
 };
 
 #endif /* UVCPREVIEW_H_ */

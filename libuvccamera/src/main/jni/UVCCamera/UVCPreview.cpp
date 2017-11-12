@@ -529,6 +529,7 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 #endif
 		if (frameMode) {
 			// MJPEG mode
+            LOGW("@@@@@@@@@@@ MJPEG mode @@@@@@@@@@@@");
 			for ( ; LIKELY(isRunning()) ; ) {
 				frame_mjpeg = waitPreviewFrame();
 				if (LIKELY(frame_mjpeg)) {
@@ -746,6 +747,9 @@ void UVCPreview::clearCaptureFrame() {
 	pthread_mutex_unlock(&capture_mutex);
 }
 
+pass_2_cv_t UVCPreview::pass2Cv = NULL;
+
+
 //======================================================================
 /*
  * thread function
@@ -782,11 +786,14 @@ void UVCPreview::do_capture(JNIEnv *env) {
 	callbackPixelFormatChanged();
 	for (; isRunning() ;) {
 		mIsCapturing = true;
+#if 0
 		if (mCaptureWindow) {
 			do_capture_surface(env);
 		} else {
 			do_capture_idle_loop(env);
 		}
+#endif
+        do_capture_idle_loop(env);
 		pthread_cond_broadcast(&capture_sync);
 	}	// end of for (; isRunning() ;)
 	EXIT();
@@ -796,9 +803,14 @@ void UVCPreview::do_capture_idle_loop(JNIEnv *env) {
 	ENTER();
 	
 	for (; isRunning() && isCapturing() ;) {
-		do_capture_callback(env, waitCaptureFrame());
+		//do_capture_callback(env, waitCaptureFrame());
+        uvc_frame_t *frame = waitCaptureFrame();
+        if(pass2Cv) {
+            pass2Cv(env, frame);
+        }
+        recycle_frame(frame);
 	}
-	
+    pass2Cv = NULL;
 	EXIT();
 }
 
